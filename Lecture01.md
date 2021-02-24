@@ -51,8 +51,8 @@ quicksort (x:xs) = quicksort le ++ [x] ++ quicksort gr
 * Teoria kategorii 
 * Deklaratywne
 * Bez efektów ubocznych
-* Leniwe obliczanie
 * λ - calculus
+* Leniwe obliczanie
 
 ---
 
@@ -132,6 +132,22 @@ f(5)+g(5) = g(5)+f(5)
 * ...
 
 ---
+
+# Programowanie w Haskellu, kilka skojarzeń:
+
+## λ - calculus
+
+*Definicja* (notacja Haskellowa) 
+e ::= x ∈ Variables |  λx -> e | e e' 
+
+*Definicja* (simply typed λ-calculus)
+Gramatyka typów:
+t ::= t -> t' | t' ∈ BaseTypes 
+Gramatyka wyrażeń λ:
+e ::= x |  λx:t -> e | e e' | c ∈ ConstantsOfBaseTypes 
+
+---
+
 # Programowanie w Haskellu, kilka skojarzeń: 
 
 ## Leniwe obliczanie
@@ -312,6 +328,7 @@ Just (sum [1..10])
 
 *Nie-przykłady*
 ```haskell
+map (\x-> x*x) [1,2]
 (+) 1 2
 ```
 
@@ -331,20 +348,22 @@ f x = x*x
 
 *Sztuczka*
 ```haskell
-seq a _  -- oblicza a do WHNF (drugi argument może być dowolny, np. ()). 
+seq x y  -- oblicza x do WHNF (drugi argument może być dowolny, np. ()) i zwraca y. 
 ```
 
 Można sprawdzić działanie 
 ```haskell
-ghci> let x = 2+3
+ghci> let x = 2+3 :: Int
 ghci> :sprint x
 
 ghci> seq x ()
+()
 ghci> :sprint x
 
-ghci> let y = (,) (4+3) 3
+ghci> let y = map id [x]
 ghci> :sprint y
 ghci> seq y ()
+()
 ghci> :sprint y
 
 ghci> y 
@@ -374,7 +393,7 @@ negate x = -x
 *Ćwiczenie 2*
 Przedstawić ciąg redukcji:
 ```haskell
-take 6 . map (+1) $ [1..10]
+(take 6 . map (+1)) [1..10]
 ```
 
 ---
@@ -393,10 +412,10 @@ sum' []     = 0
 sum' (x:xs) = x + sum' xs
 
 
-sum' [1..10000000]
+sum' [1..100000000]
 
 
-sumUp [1..10000000]
+sumUp [1..100000000]
 ```
 
 

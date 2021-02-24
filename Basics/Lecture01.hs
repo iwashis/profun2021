@@ -6,12 +6,17 @@ module Lecture01 where -- nazwa modułu, który piszemy
 import Data.List
 
 --przykład funkcji napisanej w języku Haskell:
-quicksort :: Ord a => [a] -> [a] -- tą linię można usunąć. Haskell sam wywnioskuje typ funkcji.
+--quicksort :: Ord a => [a] -> [a] -- tą linię można usunąć. Haskell sam wywnioskuje typ funkcji.
+
 quicksort []     = []
 quicksort (x:xs) = quicksort le ++ [x] ++ quicksort gr
   where
     le = filter (< x) xs
     gr = filter (>=x) xs
+
+
+-- do Obejrzenia na YT:
+-- Philip Wadler: Propositions as types
 
 
 -- przykład deklaratywnej definicji funkcji sumowania wartości numerycznych
@@ -33,7 +38,7 @@ val = f 1 (product [1..])
 --propozycja definicji length1
 length1 :: [a] -> Int 
 length1 []     = 0
-length1 (x:xs) = 1+(length1 xs)
+length1 (x:xs) = 1 + length1 xs
 
 
 --pomocnicza wartość val2
@@ -46,7 +51,6 @@ length2 [] = 0
 length2 (x:xs) = if x > 0 then r else r
   where r = 1+length2 xs
  
-
 --funkcja sumująca wartości numeryczne w liście (znowu!)
 sum' []     = 0
 sum' (x:xs) = x + sum' xs
@@ -56,7 +60,10 @@ sum' (x:xs) = x + sum' xs
 --obliczania.
 sum'' xs = go xs 0
   where go [] accum     = accum
-        go (x:xs) accum = let s = x+accum in seq s $ go xs s
+        go (x:xs) accum = go xs (x+accum) --let s = x+accum in seq s $ go xs s
+-- prosze się pobawic i uruchomić jedną i drugą wersję sum'' dla 
+-- [1..100000000].
+
 
 --Druga, bardziej przejrzysta metoda radzenia sobie z problemami z pamięcią przy 
 --leniwej ewaluacji: Bang Patterns. Proszę zwrócić uwagę na pierwszą linię w naszym
