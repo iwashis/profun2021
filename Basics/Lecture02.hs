@@ -80,31 +80,28 @@ length3 :: IntList -> Int
 length3 EmptyList   = 0
 length3 (Head _ xs) = 1 + length3 xs
 
---
--- Synonimy typów, czyli type 
---
-
-measure :: Double -> Double -> Double
-measure w h = w*h 
-
-type Width  = Double
-type Height = Double
-type Area   = Double
-
-measure2 :: Width -> Height -> Area
-measure2 w h = w*h
 
 --
 -- Typy parametryczne
 --
 data List a = Empty | NonEmpty a (List a)
+  deriving Show
 --
 -- napisać funkcję toList :: List a -> [a]
 --
-
+toList :: List a -> [a]
+toList Empty = []
+toList (NonEmpty x tail) = x : toList tail 
 
 --
 -- Przykład z dwoma parametrami typów:
 --
 data Tree a b = EmptyTree | Node a (Tree a b) (Tree b a)
   deriving Show
+
+
+data PairOrMap a b = Pair a b | Map (a -> b)
+
+p = Pair 1.0 "s"
+f = Map take
+

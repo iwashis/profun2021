@@ -98,7 +98,7 @@ examplePerson3 = Person2 { surname = "Kowalski"
 # Praca z ADT
 
 ```haskell
-data Person2 = Person2  { name    :: String
+data Person2 = Person2 { name    :: String
                        , surname :: String
                        , address :: String 
                        , age     :: Integer
@@ -137,23 +137,6 @@ length :: IntList -> Int
 
 ---
 
-# Synonimy typów
-
-```haskell
-measure :: Double -> Double -> Double
-measure w h = w*h 
-
-type Width  = Double
-type Height = Double
-type Area   = Double
-
-measure2 :: Width -> Height -> Area
-measure2 w h = w*h
-```
-
-
----
-
 # Typy parametryczne
 
 ```haskell
@@ -169,9 +152,11 @@ data BinTree a = EmptyTree | Node a (BinTree a) (BinTree a)
 ```
 i jeszcze przykłady:
 ```haskell
-data Tuple a = Tuple a a
+data Tuple a      = Tuple a a
 
 data Triple a b c = Triple a b c
+
+data PairOrMap a b   = Pair a b | Map (a -> b)
 ```
 
 ---
@@ -188,4 +173,3 @@ data State s a   = State { runState :: s -> (a,s) }
 ```
 
 
----
