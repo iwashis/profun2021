@@ -49,7 +49,7 @@ instance Functor List where
 
 # Definiowanie własnych typeclasses
 
-## Przyklady typeclass predefiniowanych w Haskellu (wersja skrocona):
+## Przyklady typeclass predefiniowanych w Haskellu (wersja skrócona):
 
 ```haskell
 class Functor f where
@@ -62,7 +62,7 @@ class Semigroup a where
   (<>) :: a -> a -> a
 
 class Semigroup a => Monoid a where
-  mempty :: a
+  mempty  :: a
   mappend :: a -> a -> a
   mappend = (<>)
 ```
@@ -113,23 +113,21 @@ ai   :: a
 ```
 Rozważmy następujące przyporządkowania:
 ```haskell
-* seed [a1,...an] -> a1*(a2*...(an*seed))...)
-# seed [a1,...an] -> ((..(seed#a1)#a2#...)#an
+foldl (#) seed [a1..an] -> ((..(seed#a1)#a2#..)#an
+foldr (*) seed [a1..an] -> a1*(a2*..(an*seed))..) 
 ```
-
-
+Ich definicje są następujące:
 ```haskell
 foldl :: (b -> a -> b) -> b -> [a] -> b
 foldl f seed []     =  seed
 foldl f seed (x:xs) =  foldl f (f seed x) xs
 ```
-
+oraz:
 ```haskell 
 foldr :: (a -> b -> b) -> b -> [a] -> b
 foldr f seed []     = seed
 foldr f seed (x:xs) = f x (foldr seed xs)
 ```
-
 Obie funkcje działają leniwie! Jedną z nich można przepisać do 
 wersji gorliwej:
 ```haskell
@@ -147,8 +145,7 @@ foldl' f seed (x:xs) = let z = f seed x in seq z (foldl' f z xs)
 ```haskell
 init :: [a] -> [[a]] 
 ```
-zwracającą wszystkie
-prefiksy argumentu, np. 
+zwracającą wszystkie prefiksy argumentu, np. 
 ```haskell
 init "tomek" = [[],"t","to","tom","tome","tomek"]
 ```
@@ -156,10 +153,8 @@ init "tomek" = [[],"t","to","tom","tome","tomek"]
 ```haskell 
 approxE :: Int -> Double
 ```
-która dla argumentu n zwraca
-przybliżoną wartość liczby Eulera 
-(używajac klasycznego wzoru na sumę 
-odwrotności silnii kolejnych liczb nautralnych)
+która dla argumentu n zwraca przybliżoną wartość liczby Eulera 
+(używajac klasycznego wzoru na sumę odwrotności silnii kolejnych liczb nautralnych)
 
 ## Ćwiczenia ciekawsze
 
@@ -167,75 +162,74 @@ odwrotności silnii kolejnych liczb nautralnych)
 
 ---
 
-# Definicja foldl za pomocą foldr: 
+# Ćwiczenie 3 (definicja foldl za pomocą foldr) 
+
+## Komentarz pomocniczy:
 
 ```haskell
-foldl :: (b -> a -> b) -> b -> [a] -> b
-foldl f v []       = v
-foldl f v (x : xs) = foldl f (f v x) xs
-
-
-foldl f v xs = g xs v
-    where
-        g []     v = v
-        g (x:xs) v = g xs (f v x)
-
-
-foldl f v xs = g xs v -- (g xs) v
-    where
-        g []     = \v -> v -- to samo co id
-        g (x:xs) = \v -> g xs (f v x)
-
-
-foldl f seed xs = (foldr step id xs) seed
-  where 
-    step x g a = g (f a x)
+foldl (#) seed [a1..an] -> ((..(seed#a1)#a2#..)#an
+foldr (*) seed [a1..an] -> a1*(a2*..(an*seed))..) 
 ```
 
----
+Rozważmy:
 
-# Definicja foldl za pomocą foldr:
+```haskell
+f1 = \v -> v # a1
+f2 = \v -> v # a2
+...
+fn = \v -> v # an
+```
+
+Co się stanie jak policzymy:
+```haskell
+(foldr (flip (.)) id [f1..fn]) seed   -- flip :: (a -> b -> c) -> (b -> a -> c) 
+```
 
 ```haskell 
-myFoldl f seed xs = (foldr step id xs) seed
-  where 
-    step x g a = g (f a x)
-
-foldr :: (a -> b -> b) -> b -> [a] -> b
-foldr f seed []     = seed
-foldr f seed (x:xs) = f x (foldr seed xs)
+(foldr (flip (.)) id [f1..fn]) seed ->   (...( id . fn )..). f2) . f1 seed 
+== (fn . fn-1 . .. . f1)  seed -> (.. (seed # a1) # a2 .. )# an  
 ```
-
-Sprawdźmy obliczenia na przykładzie:
-
-```haskell
-myFoldl (/) 1 [2,3] = (foldr step id [2,3]) 1 ->
-(step 2 (foldr step id [3])) 1 ->
-(step 2 (step 3 (foldr step id [])) 1 -> 
-(step 2 (step 3 id)) 1 ->
-(step 2 (\n -> id ((/) n 3))) 1 ->
-(step 2 (\n -> (/) n 3)) 1 ->
-(\m -> (\n-> (/) n 3) ((/) m 2)) 1 ->
-(\n -> (/) n 3) ((/) 1 2) ->
-(\n -> (/) n 3) 1/2 ->
-(1/2)/3 -> 0.1666666....
-```
+Dokończyć zadanie!
 
 ---
 
 # Foldables bardziej ogólnie
 
 ```haskell
-data Tree a = Empty | Leaf a | Node a (Tree a) (Tree a)
+data Tree a = EmptyTree | Leaf a | Node a (Tree a) (Tree a)
 ```
-Spróbujmy napisać wersje foldr dla Tree a zamiast [a].
+Przykład:
+```haskell
+tree :: Tree String
+tree = Node "a" (Node "b" Empty (Leaf "c")) (Node "d" Empty Empty)
+```
+Żeby łatwiej zrozumieć tree spójrzmy na: 
+```
+          a
+        /   \
+       b     d
+        \
+         c
+```
+Spróbujmy napisać wersje foldr dla Tree a zamiast dla [a].
 
 ```haskell
 foldr :: (a -> b -> b) -> b -> Tree a -> b
-foldr f seed Empty               = seed
+foldr f seed EmptyTree           = seed
 foldr f seed (Leaf x)            = f x seed
 foldr f seed (Node x left right) = foldr f (f x (foldr f seed right)) left
 ```
+
+Możemy też napisać coś nowego!
+```haskell
+foldMap :: (Monoid m) => (a -> m) -> Tree a -> m
+```
+Okazuje się, że używając foldr możemy wyrazić foldMap i odwrotnie!
+Oznacza to, że wystarczy zdefiniować jedno z nich. 
+
+## Ćwiczenie
+
+Zdefiniować foldMap za pomocą foldr i odwrotnie (dla list).
 
 ---
 
@@ -244,18 +238,18 @@ foldr f seed (Node x left right) = foldr f (f x (foldr f seed right)) left
 ```haskell
 class Foldable t where
   foldr   :: (a -> b -> b) -> b -> t a -> b
-  foldl   :: (b -> a -> b) -> b -> t a -> b
   foldMap :: (Monoid m) => (a -> m) -> t a -> m
+-- i inne:  
   fold    :: (Monoid m) => t m -> m
+  foldl   :: (b -> a -> b) -> b -> t a -> b
   ...
 ```
-Minimalna definicja instancji zawierać musi definicję
+Nie trzeba definiować obu: foldr i foldMap. Wystarczy jedno z nich, gdyż
+minimalna definicja instancji Foldable zawierać ma definicję
 ```haskell
-foldr | foldMap
+foldr
+-- lub
+foldMap
 ```
 
-## Ćwiczenie
 
-Zdefiniować foldMap za pomocą foldr i odwrotnie.
-
----
