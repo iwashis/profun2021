@@ -116,7 +116,7 @@ instance Functor (State1 s) where
 
 instance Monad (State1 s) where
   -- return :: a -> State1 s a === s -> (a,s)
-  return x = state1 $ (,) x 
+  return x = state1 $ \st -> (x,st) 
   -- >>= State1 s a -> (a -> State1 s b) -> State1 s b
   -- st >>= f ?
   -- st :: State1 s a === s -> (a,s)
@@ -128,4 +128,23 @@ instance Monad (State1 s) where
 instance Applicative (State1 s) where
   pure    = return
   x <*> y = ap x y
+
+
+
+
+-- Dodatkowo, bardzo często używać będziemy 
+put1 :: s -> State1 s ()    -- put1 :: s -> (s-> ((),s))
+put1 st = state1 $ \_ -> ((),st)
+--
+-- get1 :: State1 s s -- get1 :: s -> (s,s)
+get1 = state1 $ \state -> (state, state)
+
+-- UWAGA! Pamiętajmy, że powyższe instancje i funkcje pomocnicze zdefiniowane są dla 
+-- typu izomorficznego z tym, z którym będziemy pracować. 
+-- Od tej chwili będziemy pracowali ze State s a, nie State1 s a :). Co więcej mamy wybór
+-- między wersją strict i lazy:
+-- Control.Monad.State.Strict
+-- oraz
+-- Control.Monad.State.Lazy
+
 
