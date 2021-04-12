@@ -70,6 +70,79 @@ showCostValue :: [Double -> Double] -> Double -> (Int, Double)
 
 ---
 
+# Diagramy sznurkowe dla State monad
+
+Ogólnie, jeśli mamy wyrażenie f :: State s a zadane przez
+```haskell
+f = f1 >> f2 >> f3 >> ... >> fn
+```
+lub, równoważnie, zapisane w notacji do:
+```haskell
+f = do
+  f1
+  f2
+  ...
+  fn
+```
+możemy go rozumieć używając notacji diagramów sznurkowych:
+```haskell
+ s |-----| s        |-----|  s        |------| s
+---|     |----------|     |----...----|      |-----
+   | f1  |          | f2  |           |  fn  |
+   |     |--        |     |---        |      |-----
+   |_____| a1       |_____|  a2       |______| an = a
+```
+Jeśli zaś nasze wyrażenie wygląda następująco:
+```haskell
+f = do
+  f1
+  ...
+  x <- fi
+  ...
+  fj x
+  ...
+  fn
+```
+to diagram sznurkowy odpowiadający f wygląda tak:
+```haskell
+ s |-----| s        |-----|  s     |------|            |------|
+---|     |---... ---|     |--------|      |--...-------|      |----...
+   | f1  |          | fi  |        |fi+1  |            | fj   |
+   |     |--        |     |---|    |      |--       |--|      |----...
+   |_____| a1       |_____|   |    |______|         |  |______|
+                              |                     |
+                              |_____________________|
+```
+
+
+---
+
+# Jak to wygląda na przykładzie?
+
+Rozważmy następujący kod:
+```haskell
+addCost :: (Double -> Double) -> Double -> State Int Double
+addCost f r = do
+  cost <- get
+  put $ new cost
+  return $ f r
+  where new x = if r > 0 then x-3 else x+2
+```
+1. Jakiego typu jest wartość addCost f r?
+Odp. State Int Double, lub, izomorficznie, Int -> (Double,Int).
+
+Spróbujmy przeanalizować krok po kroku co się dzieje w powyższym kodzie:
+```haskell
+ s |-----| s              |-----|  new s |------| new s
+---|     |----------------|     |--------|      |-----
+   | get |                | put |        |return|
+   |     |--- |new|-------|     |---     |      |-----
+   |_____| s         new s|_____|  ()    |______| f r
+```
+
+
+---
+
 # Zadanie 2
 
 Praca z generatorami liczb pseudolosowych.
@@ -83,7 +156,18 @@ Podpowiedź:
 ```haskell
 type Random = State Integer
 
-randomize :: Random ()
+shuffle :: Integer -> Integer
 
-generatePseudoRandomList :: Integer -> Random [Integer]
+randomPickInteger :: Random Integer
+randomPickInteger = do   -- randomPick = get >>= put . shuffle >> get
+  x <- get
+  put $ shuffle x
+  return x               -- tu można po prostu get
+
+randomPickList :: Integer -> Random [Integer]
+randomPickList 0 = return []
+randomPickList n = do
+  x  <- randomPickInteger
+  xs <- randomPickList $ n-1
+  return (x:xs)
 ```

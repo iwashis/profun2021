@@ -45,8 +45,6 @@ showCostValue list r = runState (composeCost list r) 0 -- Int -> (Double, Int)
     
 
 
-
-
 ----------------------------------------------------------
 -- Zadanie:
 -- State monad: Praca z generatorami liczb pseudolosowych.
@@ -58,18 +56,17 @@ seed :: Integer
 seed  = 123125
 
 
-randomize :: Random ()
-randomize = modify f
-  where f x = x^2 - x^3
+randomPickInteger :: Random Integer
+randomPickInteger = do
+  x <- get
+  put $ shuffle x
+  get
+    where shuffle x = x^2-x^3
 
 
-
-generatePseudoRandomList :: Integer -> Random [Integer]
-generatePseudoRandomList 0 = return []
-generatePseudoRandomList n = do
-  randomize
-  rand <- get
-  randtail <- generatePseudoRandomList $ n-1
-  return $ rand:randtail
-
-
+randomPickList :: Integer -> Random [Integer]
+randomPickList 0 = return []
+randomPickList n = do 
+  x  <- randomPickInteger
+  xs <- randomPickList $ n-1
+  return (x:xs)
