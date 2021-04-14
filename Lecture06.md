@@ -76,6 +76,7 @@ Ogólnie, jeśli mamy wyrażenie f :: State s a zadane przez
 ```haskell
 f = f1 >> f2 >> f3 >> ... >> fn
 ```
+
 lub, równoważnie, zapisane w notacji do:
 ```haskell
 f = do
@@ -84,7 +85,8 @@ f = do
   ...
   fn
 ```
-możemy go rozumieć używając notacji diagramów sznurkowych:
+
+możemy je rozumieć używając notacji diagramów sznurkowych:
 ```haskell
  s |-----| s        |-----|  s        |------| s
 ---|     |----------|     |----...----|      |-----
@@ -92,6 +94,7 @@ możemy go rozumieć używając notacji diagramów sznurkowych:
    |     |--        |     |---        |      |-----
    |_____| a1       |_____|  a2       |______| an = a
 ```
+
 Jeśli zaś nasze wyrażenie wygląda następująco:
 ```haskell
 f = do
@@ -105,6 +108,7 @@ f = do
 ```
 to diagram sznurkowy odpowiadający f wygląda tak:
 ```haskell
+
  s |-----| s        |-----|  s     |------|            |------|
 ---|     |---... ---|     |--------|      |--...-------|      |----...
    | f1  |          | fi  |        |fi+1  |            | fj   |
@@ -112,6 +116,7 @@ to diagram sznurkowy odpowiadający f wygląda tak:
    |_____| a1       |_____|   |    |______|         |  |______|
                               |                     |
                               |_____________________|
+
 ```
 
 
@@ -133,13 +138,14 @@ Odp. State Int Double, lub, izomorficznie, Int -> (Double,Int).
 
 Spróbujmy przeanalizować krok po kroku co się dzieje w powyższym kodzie:
 ```haskell
+
  s |-----| s              |-----|  new s |------| new s
 ---|     |----------------|     |--------|      |-----
    | get |                | put |        |return|
    |     |--- |new|-------|     |---     |      |-----
    |_____| s         new s|_____|  ()    |______| f r
-```
 
+```
 
 ---
 
@@ -156,18 +162,29 @@ Podpowiedź:
 ```haskell
 type Random = State Integer
 
-shuffle :: Integer -> Integer
+shuffle :: Integer -> Integer -- funkcja tasująca
 
-randomPickInteger :: Random Integer
-randomPickInteger = do   -- randomPick = get >>= put . shuffle >> get
+randomInteger :: Random Integer
+randomInteger = do   -- randomInteger = get >>= put . shuffle >> get
   x <- get
   put $ shuffle x
   return x               -- tu można po prostu get
 
-randomPickList :: Integer -> Random [Integer]
-randomPickList 0 = return []
-randomPickList n = do
-  x  <- randomPickInteger
-  xs <- randomPickList $ n-1
+randomList :: Integer -> Random [Integer]   -- możemy też zastąpić przez repeatM n randomPickInteger
+randomList 0 = return []
+randomList n = do
+  x  <- randomInteger
+  xs <- randomList $ n-1
   return (x:xs)
 ```
+Na diagramach sznurkowych (część) randomList wygląda następująco:
+```haskell
+
+ s |-----| shuffle s|-----|   ...     |------| shuffle^n s
+---|     |----------|     |----...----|      |-----
+   |     |          |     |           |      |
+   |     |--        |     |---        |      |-----
+   |_____| s        |_____|shuffle s  |______| shuffle^n-1 s
+
+```
+
