@@ -56,17 +56,17 @@ seed :: Integer
 seed  = 123125
 
 
-randomPickInteger :: Random Integer
-randomPickInteger = do
+randomInteger :: Random Integer
+randomInteger = do
   x <- get
   put $ shuffle x
   get
     where shuffle x = x^2-x^3
 
 
-randomPickList :: Integer -> Random [Integer]
-randomPickList 0 = return []
-randomPickList n = do 
-  x  <- randomPickInteger
-  xs <- randomPickList $ n-1
+randomList :: Integer -> Random [Integer] -- rówoważnie możemy repeatM n randomInteger
+randomList 0 = return []
+randomList n = do 
+  x  <- randomInteger
+  xs <- randomList $ n-1
   return (x:xs)
