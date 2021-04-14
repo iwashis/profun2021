@@ -31,7 +31,9 @@ addCost f r = do
  return $ f r
 
 
-
+-- fi :: State s ai == s->(s,ai)
+-- get :: State s s = s->(s,s) 
+-- put :: s -> State s () == s-> (s->(s,())) == s -> s -> (s,()) == (s,s)-> (s,()) 
 -- Jak pracować z takimi funkcjami Double -> Cost Double?
 --
 
@@ -56,11 +58,11 @@ seed :: Integer
 seed  = 123125
 
 
-randomInteger :: Random Integer
+randomInteger :: Random Integer -- =State Integer Integer == Integer -> (Integer,Integer)
 randomInteger = do
   x <- get
   put $ shuffle x
-  get
+  return x
     where shuffle x = x^2-x^3
 
 
