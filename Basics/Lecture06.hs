@@ -1,7 +1,7 @@
 module Lecture06 where
 
 import Control.Monad.State.Strict
-
+import Control.Monad
 
 --------------------------------------------------------
 -- Zadanie: 
@@ -64,7 +64,7 @@ randomInteger = do
     where shuffle x = x^2-x^3
 
 
-randomList :: Integer -> Random [Integer] -- rówoważnie możemy repeatM n randomInteger
+randomList :: Integer -> Random [Integer] -- rówoważnie: replicateM n randomInteger
 randomList 0 = return []
 randomList n = do 
   x  <- randomInteger

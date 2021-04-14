@@ -168,9 +168,9 @@ randomInteger :: Random Integer
 randomInteger = do   -- randomInteger = get >>= put . shuffle >> get
   x <- get
   put $ shuffle x
-  return x               -- tu można po prostu get
+  return x           -- tu można po prostu get
 
-randomList :: Integer -> Random [Integer]   -- możemy też zastąpić przez repeatM n randomPickInteger
+randomList :: Integer -> Random [Integer]   -- replicateM n randomInteger
 randomList 0 = return []
 randomList n = do
   x  <- randomInteger
