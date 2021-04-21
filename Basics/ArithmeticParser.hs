@@ -20,14 +20,10 @@ type Parser a = StateT String [] a
 -- Uwaga: Parsery monadyczne są dostępne w standardowych
 -- bibliotekach Haskella. Ale my napiszemy wszystko od początku.
 --
--- String -> Maybe Int
---
---
-
-item :: Parser Char -- String -> [(Char, String)]
+item :: Parser Char -- typ izomorficzny z String -> [(Char, String)]
 item = StateT $ \case 
-                    [] -> []
-                    (x:xs) -> [(x,xs)]
+                 []     -> []
+                 (x:xs) -> [(x,xs)]
 
 
 zero :: Parser a
@@ -50,28 +46,19 @@ many1 ys = do
 digits :: Parser String
 digits = many1 digit
 
-
 integer :: Parser Int
 integer = fmap read digits
 
 plus :: Parser (Int -> Int -> Int) 
-plus = sat ( == '+' ) >> return (+)
+plus = sat (== '+') >> return (+)
 
 times :: Parser (Int -> Int -> Int)
-times = sat (== '*' ) >> return (*)
+times = sat (== '*') >> return (*)
 
 operation = plus `mplus` times
 space = sat (==' ')
 
-simple = do
-  x <- integer
-  many space
-  op <- operation
-  many space
-  y <- integer
-  return (op x y)
-
-leftBracket = sat (=='(')
+leftBracket  = sat (=='(')
 rightBracket = sat (==')')
 
 between :: Parser a -> Parser b -> Parser c -> Parser c
@@ -80,9 +67,6 @@ between left right parser = do
   x <- parser
   right
   return x
-
-lessSimple = between leftBracket rightBracket simple
-
 
 arExp :: Parser Int
 arExp = integer `mplus` between leftBracket rightBracket opExp
@@ -97,9 +81,8 @@ arExp = integer `mplus` between leftBracket rightBracket opExp
       many space
       return (op x y)
 
-
-arExpWithColon :: Parser Int
-arExpWithColon = do
+arExpWithSemiColon :: Parser Int
+arExpWithSemiColon = do
   x <- arExp
   sat(==';')
   return x
