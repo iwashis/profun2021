@@ -1,0 +1,50 @@
+name:                CellularAutomata
+version:             0.1.0.0
+github:              "iwashis/profun2021/CellularAutomata"
+license:             BSD3
+author:              "Tomasz Brengos"
+maintainer:          "Tomasz Brengos"
+copyright:           "2021 Tomasz Brengos"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/iwashis/profun2021/CellularAutomata#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- ansi-terminal
+- comonad
+- colour
+library:
+  source-dirs: src
+
+executables:
+  CellularAutomata-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - CellularAutomata
+
+tests:
+  CellularAutomata-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - CellularAutomata

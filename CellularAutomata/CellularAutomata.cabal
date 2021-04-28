@@ -1,0 +1,73 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.2.
+--
+-- see: https://github.com/sol/hpack
+
+name:           CellularAutomata
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/iwashis/profun2021/CellularAutomata#readme>
+homepage:       https://github.com/iwashis/profun2021#readme
+bug-reports:    https://github.com/iwashis/profun2021/issues
+author:         Tomasz Brengos
+maintainer:     Tomasz Brengos
+copyright:      2021 Tomasz Brengos
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/iwashis/profun2021
+  subdir: CellularAutomata
+
+library
+  exposed-modules:
+      Automata
+      Comonad.Stream
+      Comonad.Tape
+      UI
+  other-modules:
+      Paths_CellularAutomata
+  hs-source-dirs:
+      src
+  build-depends:
+      ansi-terminal
+    , base >=4.7 && <5
+    , colour
+    , comonad
+  default-language: Haskell2010
+
+executable CellularAutomata-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_CellularAutomata
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      CellularAutomata
+    , ansi-terminal
+    , base >=4.7 && <5
+    , colour
+    , comonad
+  default-language: Haskell2010
+
+test-suite CellularAutomata-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_CellularAutomata
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      CellularAutomata
+    , ansi-terminal
+    , base >=4.7 && <5
+    , colour
+    , comonad
+  default-language: Haskell2010
