@@ -4,4 +4,4 @@ import UI
 
 
 main :: IO ()
-main = displayAll 
+main = displayAll
