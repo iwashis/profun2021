@@ -5,14 +5,14 @@ module UI
 
 import Control.Concurrent (threadDelay)
 import Control.Monad (forM_, replicateM_)
-import System.IO (hFlush, stdout)
+import System.IO (hFlush, stdout, hPutStrLn)
 import Text.Printf(printf)
 import Data.Colour.SRGB (sRGB24)
 import System.Console.ANSI
 import System.Environment
 
 import Comonad.Tape
-import Automata
+import Automaton
 
 -- troche funkcji pomocnicznych do obsługi terminala.
 resetScreen :: IO () -- nie trzeba chyba tłumaczyć do czego ta funkcja służy
@@ -30,19 +30,18 @@ pause = do
   threadDelay 50000
 
 
-displayEvolution :: [Tape Char] -> IO ()
-displayEvolution list = do
+ {-
   Just (termHeight, termWidth) <- getTerminalSize -- Pobranie wielkości terminala.
-  let frameWidth = (termWidth `div` 2) - 2        -- Ustawienie szerokości ramki
+  let frameWidth = (termWidth `div` 2) - 5        -- Ustawienie szerokości ramki
                                                   -- wykorzystywanej w type FramedTape.
-  let framedTapeList = frame frameWidth <$> take (termHeight-4) list --lista taśm do wyświetlenia.
+  let framedTapeList = frame frameWidth <$> take (termHeight-5) list --lista taśm do wyświetlenia.
   -- bierzemy już tylko tyle taśm, ile równona się wysokość okna terminala - 4,
   -- bo po co więcej ?
   resetScreen
-  forM_ framedTapeList (\x -> print x >> pause)
+  forM_ framedTapeList ( \x -> print x >> pause)
 
 
-allRules = [ rule30, rule90 ] -- wszystkie zasady jakie były zdefiniowane w pliku Automata.hs
+allRules = rule <$> allAutomata -- wszystkie zasady jakie były zdefiniowane w pliku Automata.hs
 
 -- funkcja wyświetlająca ewolucje wszystkich zasad zapisanych w allRules
 displayAll =
@@ -52,3 +51,7 @@ displayAll =
       displayEvolution $
         fmap (\x -> if x then '+' else ' ') <$>
           applyRule initialTape rule
+-}
+
+displayAll :: IO ()
+displayAll = putStrLn "Nothing here"

@@ -24,6 +24,7 @@ dependencies:
 - ansi-terminal
 - comonad
 - colour
+- QuickCheck
 library:
   source-dirs: src
 

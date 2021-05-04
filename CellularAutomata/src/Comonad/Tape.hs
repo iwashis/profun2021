@@ -4,7 +4,6 @@ module Comonad.Tape
   , FramedTape (..)
   , initialTape
   , frame
-  , frameDefault
   )
     where
 
@@ -37,8 +36,6 @@ initialTape :: Tape Bool -- początkowa taśma z głowicą na True, reszta taśm
 initialTape = Tape falses True falses
   where falses = Stream False falses
 
-
-
 data FramedTape a = FramedTape -- ta struktura danych uzywana będzie do wyświetlania
                     { tape  :: Tape a
                     , width :: Int
@@ -48,12 +45,10 @@ data FramedTape a = FramedTape -- ta struktura danych uzywana będzie do wyświe
 -- pokazujemy tylko część taśmy o promieniu reprezentowanym przez wartość tape ft
 -- gdzie ft :: FramedType a. Całej taśmy nie da się wyświetlić :(
 instance (Show a) => Show (FramedTape a) where
-  show (FramedTape tape n) =
-    removeApostrophes . show $
-      (reverse . Stream.take n $ left tape)
-      ++ [value tape]
-      ++ Stream.take n (right tape)
-
+  show (FramedTape tape n) = removeApostrophes . show $
+        (reverse . Stream.take n $ left tape)
+        ++ [value tape]
+        ++ Stream.take n (right tape)
     where
       removeFirst :: Char -> String -> String
       removeFirst _ [] = []
@@ -64,12 +59,4 @@ instance (Show a) => Show (FramedTape a) where
 
 defaultFrameWidth = 20
 
-
--- Funkcja która dorzuca domyślną szerokość ramki. Szerokość ta zadana jest powyżej.
-frameDefault tape = FramedTape tape defaultFrameWidth
-
 frame n tape =  FramedTape tape n
-
-
-
-

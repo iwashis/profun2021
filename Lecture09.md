@@ -5,7 +5,7 @@
 Wykład 9
 
 
-## Kod wykładu 
+## Kod wykładu
 CellularAutomata/
 
 
@@ -33,10 +33,10 @@ dependencies:
 ...
 - ansi-terminal
 - colour
-- comonad 
+- comonad
 ```
 
-## Zaczynamy! 
+## Zaczynamy!
 
 ---
 
