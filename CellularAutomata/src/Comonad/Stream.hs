@@ -52,7 +52,7 @@ instance Show a => Show (Stream a) where
 repeat :: [a] -> Stream a
 repeat list = go list list
   where
-    go _ []      = error "The value of repeatS is undefined for []"
+    go _ []      = error "The value of repeat is undefined for []"
     go [] l2     = go l2 l2
     go (x:xs) l2 = Stream x (go xs l2)
 

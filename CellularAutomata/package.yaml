@@ -23,7 +23,6 @@ dependencies:
 - base >= 4.7 && < 5
 - comonad
 - colour
-- QuickCheck
 - brick
 library:
   source-dirs: src
@@ -49,3 +48,4 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - CellularAutomata
+    - QuickCheck

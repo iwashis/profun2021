@@ -17,7 +17,13 @@ https://www.cse.chalmers.se/~rjmh/QuickCheck/manual.html
 
 ---
 
-Napisaliśmy funkcję:
+# Zadanie
+Sprawdzić, czy napisane instancje monady dla Stream i Tape spełniają komonadyczne
+prawa:
+```haskell
+extend extract      = id
+extract . extend f  = f
+extend f . extend g = extend (f . extend g)
+```
 
-
-
+Napiszemy testy!
