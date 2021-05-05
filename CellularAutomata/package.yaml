@@ -21,10 +21,10 @@ description:         Please see the README on GitHub at <https://github.com/iwas
 
 dependencies:
 - base >= 4.7 && < 5
-- ansi-terminal
 - comonad
 - colour
 - QuickCheck
+- brick
 library:
   source-dirs: src
 

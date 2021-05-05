@@ -47,6 +47,7 @@ prop3 stream f g =
   (extend f . extend g) stream == extend (f . extend g) stream
 
 -- funkcja do testowania wszystkich stwierdzeń
-test = quickCheck prop1
+test = putStrLn "Stream comonad test suite"
+       >> quickCheck prop1
        >> quickCheck prop2
        >> quickCheck prop3

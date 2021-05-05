@@ -37,8 +37,8 @@ library
       src
   build-depends:
       QuickCheck
-    , ansi-terminal
     , base >=4.7 && <5
+    , brick
     , colour
     , comonad
   default-language: Haskell2010
@@ -53,8 +53,8 @@ executable CellularAutomata-exe
   build-depends:
       CellularAutomata
     , QuickCheck
-    , ansi-terminal
     , base >=4.7 && <5
+    , brick
     , colour
     , comonad
   default-language: Haskell2010
@@ -63,7 +63,9 @@ test-suite CellularAutomata-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      Temporary
       Test.Comonad.Stream
+      Test.Comonad.Tape
       Paths_CellularAutomata
   hs-source-dirs:
       test
@@ -71,8 +73,8 @@ test-suite CellularAutomata-test
   build-depends:
       CellularAutomata
     , QuickCheck
-    , ansi-terminal
     , base >=4.7 && <5
+    , brick
     , colour
     , comonad
   default-language: Haskell2010

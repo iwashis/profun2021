@@ -1,57 +1,48 @@
 module UI
     ( displayAll
     ) where
+import Brick
+import Brick.Widgets.Center
+import Brick.Widgets.Border
+import Brick.Widgets.Border.Style
 
-
-import Control.Concurrent (threadDelay)
-import Control.Monad (forM_, replicateM_)
-import System.IO (hFlush, stdout, hPutStrLn)
-import Text.Printf(printf)
-import Data.Colour.SRGB (sRGB24)
-import System.Console.ANSI
-import System.Environment
-
-import Comonad.Tape
 import Automaton
-
--- troche funkcji pomocnicznych do obsługi terminala.
-resetScreen :: IO () -- nie trzeba chyba tłumaczyć do czego ta funkcja służy
-resetScreen = do
-  setSGR [Reset]
---  setSGR [SetColor Background Dull Black] -- kolor tła
-  setSGR [SetColor Foreground Vivid Red]  -- ustawienie koloru pierwszego planu
-  clearScreen >> setCursorPosition 0 0
-
--- pauza 0.05 sekundowa. Zmieniając warość liczbową poniżej,
--- zmieniamy długość pauzy (jednostki = milisekundy).
-pause :: IO ()
-pause = do
-  hFlush stdout
-  threadDelay 50000
+import AppState
 
 
- {-
-  Just (termHeight, termWidth) <- getTerminalSize -- Pobranie wielkości terminala.
-  let frameWidth = (termWidth `div` 2) - 5        -- Ustawienie szerokości ramki
-                                                  -- wykorzystywanej w type FramedTape.
-  let framedTapeList = frame frameWidth <$> take (termHeight-5) list --lista taśm do wyświetlenia.
-  -- bierzemy już tylko tyle taśm, ile równona się wysokość okna terminala - 4,
-  -- bo po co więcej ?
-  resetScreen
-  forM_ framedTapeList ( \x -> print x >> pause)
+drawRule :: Rule -> Rule -> Widget ()
+drawRule selectedRule rule = withBorderStyle borderStyle
+  $ borderWithLabel (str $ name rule)
+  $ hCenter
+  $ padAll 1
+  $ str $ show $ ruleFunction rule
+    where
+      borderStyle = if rule == selectedRule then unicodeBold  else unicode
+
+maxEvolutionWidth  = 100
+maxEvolutionHeight = 120
+
+drawEvolution :: Int -> Int -> Evolution -> Widget ()
+drawEvolution width height evol = withBorderStyle unicode
+  $ borderWithLabel (str "Evolution")
+  $ hCenter
+  $ padAll 1
+  $ str $ unlines $ showEvolution evol (\x-> if x then '+' else ' ') width height
 
 
-allRules = rule <$> allAutomata -- wszystkie zasady jakie były zdefiniowane w pliku Automata.hs
-
--- funkcja wyświetlająca ewolucje wszystkich zasad zapisanych w allRules
-displayAll =
-  forM_ allRules displayRule
+drawRules :: AppState -> Widget ()
+drawRules appState = foldl1 (<+>) $ drawRule selectedRule <$> rules
   where
-    displayRule rule =
-      displayEvolution $
-        fmap (\x -> if x then '+' else ' ') <$>
-          applyRule initialTape rule
--}
+    rules = rule <$> AppState.allAutomata appState
+    autom = automaton appState
+    selectedRule = rule autom
+
+drawAppState :: AppState -> Widget ()
+drawAppState appState = vLimit 40 (drawEvolution maxEvolutionWidth maxEvolutionHeight evol)
+  <=> drawRules appState
+    where
+      evol = AppState.evolution appState
+
 
 displayAll :: IO ()
-displayAll = putStrLn "Nothing here"
+displayAll = simpleMain $ drawAppState defAppState

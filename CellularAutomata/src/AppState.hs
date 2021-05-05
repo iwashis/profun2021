@@ -1,14 +1,37 @@
+{-# LANGUAGE NamedFieldPuns, RecordWildCards #-}
 module AppState where
 
 import Automaton
-import Comonad.Tape
 
-
-data AppState = AppState { width    :: Int
-                         , height   :: Int
-                         , autom    :: Maybe Automaton
-                         , evol     :: Maybe Evolution
-                         , allAutom :: [ Automaton ]
+data AppState = AppState { automaton   :: Automaton
+                         , evolution   :: Evolution
+                         , allAutomata      :: [ Automaton ]
                          }
 
 
+
+defAppState  = calcEvolution (AppState automaton90 nullEvolution Automaton.allAutomata)
+
+setAutomaton :: Automaton -> AppState -> AppState
+setAutomaton autom AppState {automaton, ..} =
+  AppState {automaton = autom, ..}
+
+
+setEvolution :: Evolution -> AppState -> AppState
+setEvolution evol AppState {evolution, ..} =
+  AppState {evolution = evol, ..}
+
+
+calcEvolution :: AppState -> AppState
+calcEvolution AppState { evolution, automaton, ..} =
+  AppState { evolution = calculateEvolution automaton, ..}
+
+
+nullifyEvolution :: AppState -> AppState
+nullifyEvolution AppState { evolution, ..} =
+  AppState { evolution = nullEvolution, ..}
+
+
+setAllAutomata :: [Automaton]-> AppState -> AppState
+setAllAutomata automata AppState {allAutomata, ..} =
+  AppState {allAutomata = automata, ..}
