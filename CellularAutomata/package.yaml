@@ -24,6 +24,7 @@ dependencies:
 - comonad
 - colour
 - brick
+- vty
 library:
   source-dirs: src
 

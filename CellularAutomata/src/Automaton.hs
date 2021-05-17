@@ -1,4 +1,4 @@
-{-# LANGUAGE  TypeSynonymInstances, FlexibleInstances #-}
+{-# LANGUAGE  FlexibleInstances #-}
 module Automaton ( Automaton (..)
                  , Evolution (..)
                  , allAutomata
@@ -17,60 +17,62 @@ import Control.Comonad
 
 xor x y = (not x || not y) && ( x || y )
 
+-- zdefiniujmy alias typu, tak, żeby wiedzieć czym dokładnie
+-- i w jakim celu stosowane są funkcje typu Tape Bool -> Bool
+type Rule = Tape Bool -> Bool
 
-type RuleFun a = Tape a -> a
 -- Definicja zasady 30.
 rule30 :: Rule
-rule30 = Rule "Rule 30" f
-  where f (Tape (Stream x _) y (Stream z _)) = x `xor` (y || z)
-
-
-data Rule = Rule { name         :: String
-                 , ruleFunction :: RuleFun Bool
-                 }
-instance Eq Rule where
-  rule1 == rule2 = name rule1 == name rule2
-
-instance Show (RuleFun Bool) where
-  show rule = (\x -> if x then '1' else '0') . rule  <$>
-    [Tape (Stream.repeat [x]) y (Stream.repeat [z]) | x <- [False,True], y <- [False,True], z <- [False,True]]
+rule30 (Tape (Stream x _) y (Stream z _)) = x `xor` (y || z)
 
 -- zasada 90 związana z trójkątem Sierpińskiego
 rule90 :: Rule
-rule90 = Rule "Rule 90" f
-  where
-    f (Tape (Stream x _) _ (Stream z _)) = x `xor` z
+rule90 (Tape (Stream x _) _ (Stream z _)) = x `xor` z
 
-data Automaton = Automaton { initial :: Tape Bool
+
+instance Show Rule where
+  show rule = (\x -> if x then '1' else '0') . rule  <$>
+    [Tape (Stream.repeat [x]) y (Stream.repeat [z]) | x <- [False,True], y <- [False,True], z <- [False,True]]
+
+
+-- typ danych Automaton:
+data Automaton = Automaton { name    :: String
+                           , initial :: Tape Bool
                            , rule    :: Rule
                            }
 
-newtype Evolution = Evolution { evolution :: [Tape Bool]
-                              }
+-- przyda nam się instancja Eq dla Automaton
+instance Eq Automaton where
+  aut1 == aut2 =
+    name aut1 == name aut2
 
-nullEvolution = Evolution []
-
-calculateEvolution :: Automaton -> Evolution
-calculateEvolution automaton = Evolution $ applyRuleFun i r
-  where
-    i = initial automaton
-    r = rule automaton
-
-    applyRuleFun :: Tape Bool -> Rule -> [Tape Bool]
-    applyRuleFun initial rule =
-      initial : ( (ruleFunction rule `extend`) <$> applyRuleFun initial rule )
-
-
-showEvolution :: Evolution -> (Bool -> Char) -> Int -> Int -> [String]
-showEvolution evol f width height = Prelude.take height $
-  show . frame width' <$> (fmap f <$> evolution evol)
-  where
-    width' = (width `div` 2) - 4
-
-automaton30 = Automaton initialTape rule30
-automaton90 = Automaton initialTape rule90
+automaton30 = Automaton "Rule 30" initialTape rule30
+automaton90 = Automaton "Rule 90" initialTape rule90
 
 allAutomata :: [Automaton]
 allAutomata = [ automaton30
               , automaton90
               ]
+
+-- alias typu Evolution. Evolution to nic innego jak lista elementów
+-- typu Tape Bool.
+type Evolution = [Tape Bool]
+
+nullEvolution :: Evolution
+nullEvolution = []
+
+calculateEvolution :: Automaton -> Evolution
+calculateEvolution automaton = applyRuleFunction i r
+  where
+    i = initial automaton
+    r = rule automaton
+    applyRuleFunction :: Tape Bool -> Rule -> Evolution
+    applyRuleFunction initial rule =
+      initial : ((rule `extend`) <$> applyRuleFunction initial rule )
+
+
+showEvolution :: Evolution -> (Bool -> Char) -> Int -> Int -> [String]
+showEvolution evol f width height = Prelude.take height $
+  show . frame width' <$> (fmap f <$> evol)
+  where
+    width' = (width `div` 2) - 4
