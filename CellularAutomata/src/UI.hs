@@ -24,7 +24,7 @@ drawRules appState = foldl1 (<+>) $ drawRule <$> rules
     drawRule (rule, automatonName , isSelected) =
       withBorderStyle borderStyle
       $ borderWithLabel (str automatonName )
-      $ hCenter
+--      $ hCenter
       $ padAll 1
       $ str $ show rule
       where

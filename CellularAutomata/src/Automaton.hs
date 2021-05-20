@@ -29,9 +29,25 @@ rule30 (Tape (Stream x _) y (Stream z _)) = x `xor` (y || z)
 rule90 :: Rule
 rule90 (Tape (Stream x _) _ (Stream z _)) = x `xor` z
 
+rule110 :: Rule
+rule110  (Tape (Stream True _) True (Stream True _))    = False
+rule110  (Tape (Stream True _) True (Stream False _))   = True
+rule110  (Tape (Stream True _) False (Stream True _))   = True
+rule110  (Tape (Stream True _) False (Stream False _))  = False
+rule110  (Tape (Stream False _) True (Stream True _))   = True
+rule110  (Tape (Stream False _) True (Stream False _))  = True
+rule110  (Tape (Stream False _) False (Stream True _))  = True
+rule110  (Tape (Stream False _) False (Stream False _)) = False
+
+
+
+
+
+
 
 instance Show Rule where
-  show rule = (\x -> if x then '1' else '0') . rule  <$>
+  show rule = reverse $
+    (\x -> if x then '1' else '0') . rule  <$>
     [Tape (Stream.repeat [x]) y (Stream.repeat [z]) | x <- [False,True], y <- [False,True], z <- [False,True]]
 
 
@@ -48,10 +64,13 @@ instance Eq Automaton where
 
 automaton30 = Automaton "Rule 30" initialTape rule30
 automaton90 = Automaton "Rule 90" initialTape rule90
+automaton110 = Automaton "Rule 110" initialTape rule110
+
 
 allAutomata :: [Automaton]
 allAutomata = [ automaton30
               , automaton90
+              , automaton110
               ]
 
 -- alias typu Evolution. Evolution to nic innego jak lista elementów
