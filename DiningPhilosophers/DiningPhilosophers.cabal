@@ -6,12 +6,12 @@ cabal-version: 1.12
 
 name:           DiningPhilosophers
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/DiningPhilosophers#readme>
-homepage:       https://github.com/githubuser/DiningPhilosophers#readme
-bug-reports:    https://github.com/githubuser/DiningPhilosophers/issues
-author:         Author name here
-maintainer:     example@example.com
-copyright:      2021 Author name here
+description:    Please see the README on GitHub at <https://github.com/iwashis/ProFun2021/DiningPhilosophers#readme>
+homepage:       https://github.com/iwashis/DiningPhilosophers#readme
+bug-reports:    https://github.com/iwashis/DiningPhilosophers/issues
+author:         Tomasz Brengos
+maintainer:     Tomasz Brengos
+copyright:      2021 Tomasz Brengos
 license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
@@ -21,7 +21,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/DiningPhilosophers
+  location: https://github.com/iwashis/DiningPhilosophers
 
 library
   exposed-modules:
