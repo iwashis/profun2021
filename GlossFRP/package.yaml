@@ -1,0 +1,52 @@
+name:                GlossFRP
+version:             0.1.0.0
+github:              "iwashis/Profun2021/GlossFRP"
+license:             BSD3
+author:              "Tomasz Brengos"
+maintainer:          "t.brengos at mini pw edu pl"
+copyright:           "2021 Tomasz Brengos"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/githubuser/GlossFRP#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- gloss
+- Yampa
+- yampa-gloss
+- simple-affine-space
+
+library:
+  source-dirs: src
+
+executables:
+  GlossFRP-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - GlossFRP
+
+tests:
+  GlossFRP-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - GlossFRP
