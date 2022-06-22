@@ -21,7 +21,7 @@ type Parser a = StateT String [] a
 -- bibliotekach Haskella. Ale my napiszemy wszystko od początku.
 --
 item :: Parser Char -- typ izomorficzny z String -> [(Char, String)]
-item = StateT $ \case 
+item = StateT $ \case
                  []     -> []
                  (x:xs) -> [(x,xs)]
 
@@ -49,7 +49,7 @@ digits = many1 digit
 integer :: Parser Int
 integer = fmap read digits
 
-plus :: Parser (Int -> Int -> Int) 
+plus :: Parser (Int -> Int -> Int)
 plus = sat (== '+') >> return (+)
 
 times :: Parser (Int -> Int -> Int)
